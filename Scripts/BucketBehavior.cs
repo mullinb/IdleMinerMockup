@@ -2,35 +2,53 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+
 public class BucketBehavior : MonoBehaviour {
 
-	public float currentAmount;
+	public double currentBucketAmount;
 
 	void Start () {
-		currentAmount = 0;
-		GetComponentInChildren<Text
+		currentBucketAmount = 500;
 	}
 
 	public void PickUpResources (GameObject currentWorker) {
-		if (currentWorker.tag == "Miner") 
-		{
-			currentWorker.currentAmountCarried = currentWorker.carryCapacity;
-		} else
-		{
-			currentWorker.currentAmountCarried = DeterminePickUpAmount(currentWorker.carryCapacity, pickUpBucket.currentAmount);
-			currentAmount -= DeterminePickUpAmount(carryCapacity, pickUpBucket.currentAmount);
+
+		WorkerBehavior workerBehavior = currentWorker.GetComponent<WorkerBehavior> (); 
+
+		if (currentWorker.tag == "Miner") {
+			workerBehavior.currentAmountCarried = workerBehavior.carryCapacity;
+			workerBehavior.WaitToLoadThenTurnAround (workerBehavior.carryCapacity);
 		}
+		else 
+		{
+			double workerCurrentCarryCapacity = workerBehavior.carryCapacity - workerBehavior.currentAmountCarried;
+
+			double pickUpAmount = DeterminePickUpAmount (workerCurrentCarryCapacity, currentBucketAmount);
+
+			workerBehavior.currentAmountCarried = pickUpAmount;
+			currentBucketAmount -= pickUpAmount;
+
+			workerBehavior.WaitToLoadThenTurnAround (pickUpAmount);
+
+		}
+
 	}
 
-	public void DropOffResources () {
-		dropOffBucket.addAmountToBucket (currentAmountCarried);
-		currentAmountCarried = 0;
+	public void DropOffResources (GameObject currentWorker) {
+
+		WorkerBehavior workerBehavior = currentWorker.GetComponent<WorkerBehavior> (); 
+
+		double dropOffAmount = workerBehavior.currentAmountCarried;
+
+		currentBucketAmount += workerBehavior.currentAmountCarried;
+		workerBehavior.currentAmountCarried = 0;
+
+		workerBehavior.WaitToDropOffThenTurnAround (dropOffAmount);
 	}
 
-	public static int DeterminePickUpAmount (int carryCapacity, int currentBucketAmount)
+	public static double DeterminePickUpAmount (double currentCarryCapacity, double currentBucketAmount)
 	{
-		float currentCarryCapacity = carryCapacity - currentAmountCarried;
-		return currentCarryCapacity < currentBucketAmount ? currentCarryCapacity : currentBucketAmount;
+		return currentCarryCapacity <= currentBucketAmount ? currentCarryCapacity : currentBucketAmount;
 	}
 
 }

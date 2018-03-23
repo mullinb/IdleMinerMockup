@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ElevatorBehavior : MovementBehavior {
+public class ElevatorBehavior : WorkerBehavior {
 
 
 	void Update () {
