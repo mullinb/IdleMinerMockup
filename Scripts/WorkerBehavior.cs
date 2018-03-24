@@ -14,18 +14,21 @@ public class WorkerBehavior : MonoBehaviour {
 	public BucketBehavior myPickUpBucketScript;
 	public BucketBehavior myDropOffBucketScript;
 	public Text AmountDisplay;
+	public Slider slider;
 
-	private Rigidbody2D rb2D;
-	private float inverseMoveTime;
-	private float inverseLoadTime;
-	private bool NextWillPickUp = true;
+	protected Rigidbody2D rb2D;
+	protected float inverseMoveTime;
+	protected float inverseLoadTime;
+	protected bool NextWillPickUp = true;
 
-	void Awake () {
+	public virtual void Awake () {
 		rb2D = GetComponent <Rigidbody2D> ();
 		inverseMoveTime = 1f / moveTime;
 
 		setPickUpAndDropOffLocations(gameObject);
 		Move (pickUpLocation);
+
+		slider.gameObject.SetActive(false);
 	}
 
 	protected void Move (Vector2 destination)
@@ -44,48 +47,48 @@ public class WorkerBehavior : MonoBehaviour {
 	public void TransferAmount(double amount)
 	{
 		float currentLoadTime = (float)(amount / loadSpeedPerSecond);
-		AnimateLoadingOrUnloading (currentLoadTime);
-		if (NextWillPickUp)
-			StartCoroutine(PickUpAndTurnBack(amount, currentLoadTime));
-		else
+		if (NextWillPickUp) {
+			StartCoroutine (PickUpAndTurnBack (amount, currentLoadTime));
+		} else
 			StartCoroutine(DropOffAndTurnBack(amount, currentLoadTime));
 	}
 		
-	protected IEnumerator PickUpAndTurnBack (double amount, float currentLoadTime) {
+	virtual public IEnumerator PickUpAndTurnBack (double amount, float currentLoadTime) {
+		StartCoroutine (AnimateLoadingOrUnloading (currentLoadTime));
 		yield return new WaitForSeconds (currentLoadTime);
 		if (gameObject.tag == "Miner")
 			currentAmountCarried = carryCapacity;
-		else if (amount < myPickUpBucketScript.currentBucketAmount) {
+		else if (amount <= myPickUpBucketScript.currentBucketAmount) {
 			currentAmountCarried += amount;
 			myPickUpBucketScript.UpdateBucketResources (-amount);
 		} else { 
 			currentAmountCarried = myPickUpBucketScript.currentBucketAmount;
 			myPickUpBucketScript.UpdateBucketResources (-myPickUpBucketScript.currentBucketAmount);
 		}
-		TurnAroundAndStartWalkingBack ();
+		if (gameObject.tag != "Elevator")
+			TurnAroundAndStartWalkingBack ();
 	}
 
-	protected IEnumerator DropOffAndTurnBack (double amount, float currentLoadTime) {
+	virtual public IEnumerator DropOffAndTurnBack (double amount, float currentLoadTime) {
 		if (gameObject.tag == "Miner")
 			currentLoadTime = 0;
+		StartCoroutine (AnimateLoadingOrUnloading (currentLoadTime));
 		yield return new WaitForSeconds (currentLoadTime);
 		currentAmountCarried = 0;
 		myDropOffBucketScript.UpdateBucketResources (amount);
-		TurnAroundAndStartWalkingBack ();
+		if (gameObject.tag != "Elevator")
+			TurnAroundAndStartWalkingBack ();
 	}
 
-	private void AnimateLoadingOrUnloading(float loadTime)
-	{
-		
-	}
 		
 	public void TurnAroundAndStartWalkingBack() 
 	{
 		NextWillPickUp = !NextWillPickUp;
 		Vector2 nextDestination = NextWillPickUp ? pickUpLocation : dropOffLocation;
-		gameObject.GetComponent<SpriteRenderer> ().flipX = !gameObject.GetComponent<SpriteRenderer> ().flipX;
 		setCarryAmountToDisplay ();
 		Move (nextDestination);
+		if (gameObject.tag != "Elevator")
+			gameObject.GetComponent<SpriteRenderer> ().flipX = !gameObject.GetComponent<SpriteRenderer> ().flipX;
 	}
 
 
@@ -102,6 +105,23 @@ public class WorkerBehavior : MonoBehaviour {
 		CallPickUpOrDropOff ();
 	}
 
+	private IEnumerator AnimateLoadingOrUnloading(float loadTime)
+	{	
+		if (loadTime != 0)
+			slider.gameObject.SetActive(true);
+				
+		float fillRatePerSecond = 1f / loadTime;
+	
+		slider.value = 0;
+
+		while (slider.value < 1) {
+			slider.value += fillRatePerSecond * Time.deltaTime;
+			yield return null;
+		}
+
+		slider.value = 0;
+		slider.gameObject.SetActive(false);
+	}
 
 	private void setPickUpAndDropOffLocations(GameObject currentObject)
 	{
@@ -120,15 +140,13 @@ public class WorkerBehavior : MonoBehaviour {
 			dropOffLocation = new Vector2 (-5.35f, -1.77f);
 			myPickUpBucketScript = GameObject.Find ("MineShaft").transform.GetChild(0).GetComponent<BucketBehavior>();
 			myDropOffBucketScript = GameObject.FindGameObjectWithTag ("ElevatorDeposit").GetComponent<BucketBehavior>();
-			if (gameObject.tag == "Elevator")
-				print (myPickUpBucketScript);
 		}
 	}
 
-	private void setCarryAmountToDisplay () {
+	protected void setCarryAmountToDisplay () {
 		if (gameObject.tag == "Miner")
 			return;
-		if (currentAmountCarried == 0)
+		if (gameObject.tag == "Transporter" && currentAmountCarried == 0)
 			AmountDisplay.text = "";
 		else
 			AmountDisplay.text = currentAmountCarried.ToString ("C0");
