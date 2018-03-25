@@ -5,65 +5,77 @@ using System.Linq;
 
 public class ElevatorBehavior : WorkerBehavior {
 
-
-	public List <Vector3> elevatorPickUpLocations;
 	public List <GameObject> mineShafts;
+	public List <Vector3> elevatorPickUpLocations;
 	public List <BucketBehavior> elevatorPickUpBucketScripts;
 
-	private int currentTargetShaft = -1;
+	public int currentTargetShaft = -1;
 
 	private Vector2 elevatorDropOff = new Vector2 (-5.35f, -1.77f);
 
-	public override void Awake () {
-		
+	protected override void Awake () {
+	}
+
+	protected void Start () {
 		rb2D = GetComponent <Rigidbody2D> ();
-		inverseMoveTime = 1f / moveTime;
+		moveSpeed = 2;
 
-		mineShafts = GetMineShaftsInDescendingVerticalOrder (mineShafts);
-		SetElevatorPickUpsAndDropOff (mineShafts);
+		loadSpeedPerSecond = 100;
+		carryCapacity = 200;
 
+		SetElevatorDropOff ();
 		ProceedToNextPickUp ();
 	}
+
+	private void ProceedToNextPickUp() {
+		SetCarryAmountToDisplay ();
+		currentTargetShaft++;
+		myPickUpBucketScript = elevatorPickUpBucketScripts [currentTargetShaft];
+		Move (elevatorPickUpLocations [currentTargetShaft]);
+	}
 		
-	public override IEnumerator PickUpAndTurnBack (double amount, float currentLoadTime) {
-		yield return StartCoroutine (base.PickUpAndTurnBack (amount, currentLoadTime));
-		print ("should be picking up now");
-		if (currentAmountCarried == carryCapacity || currentTargetShaft == (mineShafts.Count () - 1)) {
+	protected override IEnumerator PickingUp (double amount, float currentLoadTime) {
+		yield return StartCoroutine (WaitForLoad(currentLoadTime));
+		TransportAndElevatorPickUp (amount);
+		if (currentAmountCarried == carryCapacity || currentTargetShaft == (elevatorPickUpLocations.Count () - 1)) {
 			TurnAroundAndStartWalkingBack ();
 		} else {
 			ProceedToNextPickUp ();
 		}
 	}
 
-	public override IEnumerator DropOffAndTurnBack (double amount, float currentLoadTime) {
-		yield return StartCoroutine (base.DropOffAndTurnBack (amount, currentLoadTime));
+	protected override IEnumerator DroppingOff (double amount, float currentLoadTime) {
+		yield return StartCoroutine (base.DroppingOff (amount, currentLoadTime));
 		currentTargetShaft = -1;
 		NextWillPickUp = true;
 		ProceedToNextPickUp ();
 	}
+		
 
-	private void SetElevatorPickUpsAndDropOff(List<GameObject> mineShafts) {
-
-		dropOffLocation = elevatorDropOff;
-		myDropOffBucketScript = GameObject.FindGameObjectWithTag ("ElevatorDeposit").GetComponent<BucketBehavior>();
-
-		foreach (GameObject mineShaft in mineShafts)
-		{
-			AddNewMineShaftForPickUp (mineShaft);
-		}
+	protected override void SetCarryAmountToDisplay () {
+		amountDisplay.text = currentAmountCarried.ToString ("C0");
 	}
-
+		
 	public void AddNewMineShaftForPickUp (GameObject mineShaft)
 	{
 		elevatorPickUpLocations.Add (new Vector3 (gameObject.transform.position.x, mineShaft.transform.position.y-.35f, 0.0f));
 		elevatorPickUpBucketScripts.Add (mineShaft.transform.Find("MineDeposit").GetComponent<BucketBehavior>());
 	}
-		
-	void ProceedToNextPickUp() {
-		setCarryAmountToDisplay ();
-		currentTargetShaft++;
-		myPickUpBucketScript = elevatorPickUpBucketScripts [currentTargetShaft];
-		Move (elevatorPickUpLocations [currentTargetShaft]);
+
+	private void SetElevatorDropOff() {
+		dropOffLocation = elevatorDropOff;
+		myDropOffBucketScript = GameObject.FindGameObjectWithTag ("ElevatorDeposit").GetComponent<BucketBehavior>();
+	}
+			
+
+
+	// Following functions would be useful if restarting existing game state with multiple mineshafts
+
+	public void SetElevatorPickUpsAndDropOff() {  
+		mineShafts = GetMineShaftsInDescendingVerticalOrder (mineShafts);
+		foreach (GameObject mineShaft in mineShafts) {
+			AddNewMineShaftForPickUp (mineShaft);
+		}
 	}
 
 	private List <GameObject> GetMineShaftsInDescendingVerticalOrder (List <GameObject> mineShafts) {
