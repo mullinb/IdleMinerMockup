@@ -4,7 +4,7 @@
 <div align="center">
 <img src="https://s3.amazonaws.com/fluxlymoppings/pics/SmallerGifOfGameplay26.03.gif" maxwidth="800">
 </div>
-As much behavior is shared, the code was written from the ground up to make use of C#'s very elegant inheritance model. Using some key principles from the first few chapters of <i>Clean Code</i> by Robert C. Martin, I focused on naming all methods and parameters as descriptively and consistently as possible, and keeping functions as limited in length as possible. Functions are organized in the various behavioral classes as chronologically as they can be (in terms of typical behavior loops), with utility functions appearing towards the bottom.
+As much behavior is shared, the code was written from the ground up to make use of C#'s very elegant inheritance model. Using some key principles from the first few chapters of <i>Clean Code</i> by Robert C. Martin, I focused on naming all methods and parameters as descriptively and consistently as possible, and keeping functions concise. Functions are organized in the various behavioral classes as chronologically as they can be (in terms of typical behavior loops), with utility functions appearing towards the bottom.
 
 ## Unit Types
 
