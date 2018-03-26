@@ -1,6 +1,6 @@
 # IdleMinerMockup
 
-#### This is demo mock up of a popular android/iOS mobile game made as an exercise in the Unity Editor.
+#### This is demo mock up of a hugely popular android/iOS mobile game, made as an exercise in the Unity Editor.
 <div align="center">
 <img src="https://s3.amazonaws.com/fluxlymoppings/pics/SmallerGifOfGameplay26.03.gif" maxwidth="800">
 </div>
