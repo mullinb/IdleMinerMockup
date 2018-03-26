@@ -28,4 +28,4 @@ In sum, it is easy to suggest that the Game Manager shares game state control wi
 
 #### Refactoring to do...
 
-Note: some additional refactoring remains to be done. A major refactor was done the main WorkerBehavior class and subclasses midway through the project, but there are presently some additional "hanging" variables and the like that could be cleaned up. It struck me as I am writing this that the big if/else chain at the bottom of WorkerBehavior is completely unnecessary, and those respective directives could be added as overrides to the various WorkerBehavior subclasses.
+Note: some additional refactoring remains to be done. A major refactor was done on the main WorkerBehavior class and subclasses midway through the project, but there are presently some additional "hanging" variables and the like that could be cleaned up. It struck me as I am writing this that the big if/else chain at the bottom of WorkerBehavior is completely unnecessary, and those respective directives could be added as overrides to the various WorkerBehavior subclasses.
