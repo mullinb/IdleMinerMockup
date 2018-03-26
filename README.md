@@ -12,7 +12,7 @@ As the three main unit types, Transporter, Miner, and the Elevator, all function
 
 ## Bucket Behavior
 
-Bucket Behavior is a simple script that runs for the elevator Bucket and all mine Buckets (referred to as Deposits in game, should probably refactor that). A very slightly modified form runs for the Transporter Bucket, as the Transporter Bucket is actually the PlayerBank. This Bank is different as it needs be globally accessible to the player via UI elements, allowing for expenditures. The Game Manager directly manages one type of such expenditure, namely, the purchasing of new Mine Shafts as the player progresses, and maintains a numerical reference to this element of the game state.
+Bucket Behavior is a simple script that runs for the elevator Bucket and all mine Buckets. The Buckets are referred to as Deposits in game, which I will refactor. A very slightly modified form runs for the Transporter Bucket, as the Transporter Bucket is actually the PlayerBank. This Bank is different as it needs be globally accessible to the player via UI elements, allowing for expenditures. The Game Manager directly manages one type of such expenditure, namely, the purchasing of new Mine Shafts as the player progresses, and maintains a numerical reference to this element of the game state.
 
 ### Player Bank And Leveling Up
 
