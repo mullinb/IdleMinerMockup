@@ -28,6 +28,6 @@ The other major interaction with the PlayerBank, the LevelingBehavior, was separ
 
 In sum, it is easy to suggest that the Game Manager shares game state control with the various LevelingBehavior subclasses; for instance, if you wanted to save the game state for a player who would return later, you would have to save all of the individual LevelingBehavior data (level, load speed, number of workers etc.) <i>as well</i>. In practice, though, breaking up this functionality across different scripts is effective because the various elements of the game state are functionally independent. The Game Manager doesn't care what level a Mine is because the causal loop of asset transfer is tight enough that it doesn't need to care. The above concerns thus override worries about saving game state or otherwise centralizing game state information.
 
-#### Refactoring to do...
+#### Try it out on Heroku
 
-Note: some additional refactoring remains to be done. A major refactor was done on the main WorkerBehavior class and subclasses midway through the project, but there are presently some additional "hanging" variables and the like that could be cleaned up. It struck me as I am writing this that the big if/else chain at the bottom of WorkerBehavior is completely unnecessary, and those respective directives could be added as overrides to the various WorkerBehavior subclasses.
+IdleMinerMockup can be played here on <a href="http://idleminermockup.herokuapp.com/">Heroku</a>. I recommend playing in full screen mode. Note that not all functionality from the original is represented here, only the core gameplay loo. Difficulty and progression balance are only rough, simplified approximations of the original.
