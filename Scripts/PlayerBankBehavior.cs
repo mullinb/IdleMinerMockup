@@ -8,7 +8,6 @@ public class PlayerBankBehavior : BucketBehavior {
 
 	void Awake () {
 		gameManager.AmountOfCashOnHand = currentBucketAmount;
-		UpdateBucketResources (1000000000);
 	}
 
 	public override void UpdateBucketResources (double amount) {

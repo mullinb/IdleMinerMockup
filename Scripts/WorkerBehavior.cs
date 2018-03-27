@@ -27,7 +27,7 @@ public class WorkerBehavior : MonoBehaviour {
 		loadSpeedPerSecond = 100;
 		carryCapacity = 200;
 
-		SetPickUpAndDropOffLocations(gameObject);
+		SetTransportAndMinerPickUpAndDropOffLocations(gameObject);
 		Move (pickUpLocation);
 
 		slider.gameObject.SetActive(false);
@@ -74,8 +74,7 @@ public class WorkerBehavior : MonoBehaviour {
 		}
 	}
 
-	public void TurnAroundAndStartWalkingBack() 
-	{
+	public void TurnAroundAndStartWalkingBack() {
 		NextWillPickUp = !NextWillPickUp;
 		Vector2 nextDestination = NextWillPickUp ? pickUpLocation : dropOffLocation;
 		SetCarryAmountToDisplay ();
@@ -84,8 +83,7 @@ public class WorkerBehavior : MonoBehaviour {
 			gameObject.GetComponent<SpriteRenderer> ().flipX = !gameObject.GetComponent<SpriteRenderer> ().flipX;
 	}
 
-	protected IEnumerator SmoothMovement (Vector3 destination)
-	{
+	protected IEnumerator SmoothMovement (Vector3 destination) {
 		float sqrRemainingDistance = (transform.position - destination).sqrMagnitude;
 		while (sqrRemainingDistance > .01f) {
 			Vector3 newPosition = Vector3.MoveTowards (rb2D.position, destination, moveSpeed * Time.deltaTime);
@@ -99,8 +97,7 @@ public class WorkerBehavior : MonoBehaviour {
 			InitiateDropOff ();
 	}
 
-	private IEnumerator AnimateLoadingOrUnloading(float loadTime)
-	{	
+	private IEnumerator AnimateLoadingOrUnloading(float loadTime) {	
 		if (loadTime != 0)
 			slider.gameObject.SetActive(true);
 		float fillRatePerSecond = 1f / loadTime;
@@ -113,26 +110,7 @@ public class WorkerBehavior : MonoBehaviour {
 		slider.gameObject.SetActive(false);
 	}
 
-	private void SetPickUpAndDropOffLocations(GameObject currentObject)
-	{
-		if (gameObject.tag == "Transporter") {
-			gameObject.transform.position = new Vector3 (3.8f, 0.76f, 0.0f);
-			pickUpLocation = new Vector2 (-3.7f, 0.76f);
-			dropOffLocation = new Vector2 (4.17f, 0.76f);
-			myPickUpBucketScript = GameObject.FindGameObjectWithTag ("ElevatorDeposit").GetComponent<BucketBehavior>();
-			myDropOffBucketScript = GameObject.FindGameObjectWithTag ("PlayerBank").GetComponent<BucketBehavior>();
-		} else if (gameObject.tag == "Miner") {
-			gameObject.transform.position = new Vector3 (transform.parent.localPosition.x - 1.5f, transform.parent.localPosition.y, 0.0f);
-			pickUpLocation = new Vector2 (transform.parent.localPosition.x + 1.7f, transform.parent.localPosition.y);
-			dropOffLocation = new Vector2 (transform.parent.localPosition.x - 2, transform.parent.localPosition.y);
-			myPickUpBucketScript = transform.parent.Find("RawMaterials").GetComponent<BucketBehavior>();
-			myDropOffBucketScript = transform.parent.Find("MineDeposit").GetComponent<BucketBehavior>();
-		} else if (gameObject.tag == "Elevator") {
-			pickUpLocation = new Vector2 (-5.35f, -4.5f);
-			dropOffLocation = new Vector2 (-5.35f, -1.77f);
-			myPickUpBucketScript = GameObject.Find ("MineShaft").transform.GetChild(0).GetComponent<BucketBehavior>();
-			myDropOffBucketScript = GameObject.FindGameObjectWithTag ("ElevatorDeposit").GetComponent<BucketBehavior>();
-		}
+	protected virtual void SetTransportAndMinerPickUpAndDropOffLocations(GameObject currentObject) {
 	}
 
 	protected virtual void SetCarryAmountToDisplay () {

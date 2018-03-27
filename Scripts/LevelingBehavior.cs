@@ -14,9 +14,13 @@ public class LevelingBehavior : MonoBehaviour {
 	public int currentLevel = 1;
 	public double levelUpCost = 100;
 
-	public float currentTotalCarryCapacityMultiplier = 1;
-	public float currentTotalLoadSpeedMultiplier = 1;
-	public float currentTotalMoveSpeedMultiplier = 1;
+	protected float carryCapacityMultiplierPerLevel;
+	protected float loadSpeedMultiplierPerLevel;
+	protected float moveSpeedMultiplierPerLevel;
+
+	protected float currentTotalCarryCapacityMultiplier = 1f;
+	protected float currentTotalLoadSpeedMultiplier = 1f;
+	protected float currentTotalMoveSpeedMultiplier = 1f;
 
 	void Start () {
 		gameManager = GameObject.FindGameObjectWithTag ("GameManager").GetComponent<GameManager> ();
@@ -28,13 +32,21 @@ public class LevelingBehavior : MonoBehaviour {
 	
 	void TryToLevelUp () {
 		if (gameManager.AmountOfCashOnHand >= levelUpCost) {
-			playerBankBehavior.UpdateBucketResources(-levelUpCost);
-			currentLevel++;
-			TriggerLevelUp (currentLevel);
+			DeductLevelUpCostAndIncrementCurrentLevel ();
+			ExecuteLevelUp (currentLevel);
+			UpdateLevelCostAndDisplay ();
 		}
 	}
 		
-	protected virtual void TriggerLevelUp (int currentLevel) {
+	private void DeductLevelUpCostAndIncrementCurrentLevel () {
+		playerBankBehavior.UpdateBucketResources(-levelUpCost);
+		currentLevel++;
+	}
+
+	protected virtual void ExecuteLevelUp (int currentLevel) {
+	}
+		
+	private void UpdateLevelCostAndDisplay () {
 		levelUpCost *= 1.5f;
 		levelUpText.text = "Level " + currentLevel.ToString () + "\nLevel Up? " + levelUpCost.ToString ("C0");
 	}

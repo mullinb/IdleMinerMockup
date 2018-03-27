@@ -5,27 +5,49 @@ using UnityEngine;
 public class TransporterLevelingBehavior : LevelingBehavior {
 
 	public GameObject transporterPrefab;
-	private GameObject[] transporters;
+	public List<GameObject> allTransporters;
 
-	protected override void TriggerLevelUp (int currentLevel) {
-		base.TriggerLevelUp (currentLevel);
+
+	void Awake () {
+		carryCapacityMultiplierPerLevel = 1.3f;
+		loadSpeedMultiplierPerLevel = 1.3f;
+
+		InstantiateNewTransporter ();
+	}
+
+	protected override void ExecuteLevelUp (int currentLevel) {
+		base.ExecuteLevelUp (currentLevel);
 		if (currentLevel % 10 == 0) {
 			InstantiateNewTransporter ();
 		}
-		transporters = GameObject.FindGameObjectsWithTag ("Transporter");
-		foreach(GameObject transporter in transporters) {
+		IncreaseAllTransporterStats ();
+		StoreTotalStatIncreases ();
+
+	}
+
+	private void IncreaseAllTransporterStats () {
+		foreach (GameObject transporter in allTransporters) {
 			TransporterBehavior transporterBehavior = transporter.GetComponent<TransporterBehavior> ();
-			transporterBehavior.carryCapacity *= 1.3f;
-			transporterBehavior.loadSpeedPerSecond *= 1.3f;
-			currentTotalCarryCapacityMultiplier *= 1.3f;
-			currentTotalLoadSpeedMultiplier *= 1.3f;
+			transporterBehavior.carryCapacity *= carryCapacityMultiplierPerLevel;
+			transporterBehavior.loadSpeedPerSecond *= loadSpeedMultiplierPerLevel;
 		}
 	}
 
-	private void InstantiateNewTransporter() {
+	private void StoreTotalStatIncreases () {
+		currentTotalCarryCapacityMultiplier *= carryCapacityMultiplierPerLevel;
+		currentTotalLoadSpeedMultiplier *= loadSpeedMultiplierPerLevel;
+	}
+
+	private void InstantiateNewTransporter () {
 		GameObject newTransporter = Instantiate (transporterPrefab, new Vector3 (3.8f, 0.76f, 0.0f), Quaternion.identity);
+		ApplyCurrentLevelStatsToNewTransporter (newTransporter);
+		allTransporters.Add (newTransporter);
+	}
+
+	private void ApplyCurrentLevelStatsToNewTransporter (GameObject newTransporter) {
 		TransporterBehavior newTransporterBehavior = newTransporter.GetComponent<TransporterBehavior> ();
 		newTransporterBehavior.carryCapacity *= currentTotalCarryCapacityMultiplier;
 		newTransporterBehavior.loadSpeedPerSecond *= currentTotalLoadSpeedMultiplier;
 	}
 }
+

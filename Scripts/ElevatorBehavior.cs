@@ -20,8 +20,8 @@ public class ElevatorBehavior : WorkerBehavior {
 		rb2D = GetComponent <Rigidbody2D> ();
 		moveSpeed = 2;
 
-		loadSpeedPerSecond = 100;
-		carryCapacity = 200;
+		loadSpeedPerSecond = 200;
+		carryCapacity = 400;
 
 		SetElevatorDropOff ();
 		ProceedToNextPickUp ();
@@ -67,8 +67,6 @@ public class ElevatorBehavior : WorkerBehavior {
 		myDropOffBucketScript = GameObject.FindGameObjectWithTag ("ElevatorDeposit").GetComponent<BucketBehavior>();
 	}
 			
-
-
 	// Following functions would be useful if restarting existing game state with multiple mineshafts
 
 	public void SetElevatorPickUpsAndDropOff() {  

@@ -21,17 +21,16 @@ public class GameManager : MonoBehaviour {
 	public int depthBarrierCount = 0;
 	public int maxNumberOfMineShafts = 20;
 
-	public double newShaftCost = 100;
-	public double barrierCost = 50000;
+	public double newShaftCost = 3000;
+	public double barrierCost = 500000;
 
 	void Awake () {
-		
 		nextMineShaftLocation = firstMineShaftLocation;
 		elevatorBehavior = GameObject.FindGameObjectWithTag ("Elevator").GetComponent<ElevatorBehavior> ();
 		playerBankBehavior = GameObject.FindGameObjectWithTag ("PlayerBank").GetComponent<PlayerBankBehavior> ();
 
 		newShaftButtonText = newShaftButton.GetComponentInChildren<Text> ();
-		newShaftButton.onClick.AddListener(AttemptToBuyNewShaft);
+		UpdateNewShaftButton ();
 		InstantiateNewMine ();
 	}
 
@@ -52,7 +51,6 @@ public class GameManager : MonoBehaviour {
 	private void AfterMineInstantiationSetUp () {
 		mineShaftCount++;
 		if (mineShaftCount >= maxNumberOfMineShafts) {
-			print ("hit max");
 			newShaftButton.gameObject.SetActive(false);
 			return;
 		} 
