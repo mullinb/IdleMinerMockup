@@ -1,4 +1,4 @@
-# IdleMinerMockup
+<a href="http://idleminermockup.herokuapp.com/"># IdleMinerMockup</a>
 
 #### This is demo mock up of a hugely popular android/iOS mobile game, made as an exercise in the Unity Editor.
 <div align="center">
