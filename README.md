@@ -30,4 +30,4 @@ In sum, it is easy to suggest that the Game Manager shares game state control wi
 
 ## Try it out on Heroku
 
-IdleMinerMockup can be played <a href="http://idleminermockup.herokuapp.com/">here on Heroku</a>. I recommend playing in full screen mode. Note that not all functionality from the original is represented here, only the core gameplay loo. Difficulty and progression balance are only rough, simplified approximations of the original.
+IdleMinerMockup can be played <a href="http://idleminermockup.herokuapp.com/">here on Heroku</a>. I recommend playing in full screen mode. Note that not all functionality from the original is represented here, only the core gameplay loop. Difficulty and progression balance are rough, simplified approximations of the original.
